@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <time.h>/*biblioteca do rand*/
+#include <stdlib.h>
+int main (){
+    int entidades_simular,x;/*definidas variaveis*/
+    int cliente[50],tchegada[50],tfila[50],teatendimento[50],tatendimento[50],tsatendimento[50];/*50 entidades maximo*/
+    int cinicial,cfinal,ainicial,afinal;    
+	  
+    
+    printf("Informe o numero de entidades a simular: ");
+    scanf("%d",&entidades_simular);
+    printf("Informe chegada inicial: ");
+    scanf("%d",&cinicial);
+    printf("Informe chegada final: ");
+    scanf("%d",&cfinal);
+    printf("Informe atendimento inicial: ");
+    scanf("%d",&ainicial);
+    printf("Informe atendimento final: ");
+    scanf("%d",&afinal);
+    
+    
+    /*inicialização das variaveis*/
+    for(x=0;x<50;x++){
+        cliente[x]=x+1;
+    }
+    
+    /*rand pros tempos de chegada e de atendimento*/
+    for(x=0;x<entidades_simular;x++){
+       tchegada[x]=(rand()%(cfinal-cinicial)+cinicial);
+       
+       if(x>0)
+          tchegada[x]=tchegada[x]+tchegada[x-1]; /*pra acumular os tempos*/
+       tatendimento[x]=(rand()%(afinal-ainicial))+ainicial;/*soma com o inicio pois é o minimo que quer*/
+    }
+    tchegada[0]=0;   /*tempo de chegada do primeiro cliente é sempre 0*/
+   
+    /*calculo para o cliente 1*/
+    teatendimento[0]=tchegada[0];
+    tsatendimento[0]=teatendimento[0]+tatendimento[0];
+   
+   /*calculos restantes*/
+    for(x=1;x<entidades_simular;x++){     
+       if(tchegada[x]<tsatendimento[x-1])
+           teatendimento[x] = tsatendimento[x-1]; 
+       else
+           teatendimento[x]=tchegada[x];
+       tfila[x]=teatendimento[x]-tchegada[x];    
+       tsatendimento[x]=teatendimento[x]+tatendimento[x];
+    } 
+   
+   
+    
+    printf("Cliente     T.C      TEF     TEA    T.A      TSA\n");
+    for (x=0;x<entidades_simular;x++)
+        printf("%7d  %6d  %6d  %6d  %6d  %6d\n",cliente[x],tchegada[x],tfila[x],teatendimento[x],tatendimento[x],tsatendimento[x]);/*saidas*/
+        
+    system("pause");    
+    return(0);
+}
